@@ -1,0 +1,152 @@
+<!--Lab_Mid-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Global Tech Connect </title>
+</head>
+<body>
+<h1> Event Registration Form </h1>
+<form id="form">
+<label> Full Name: </label><br>
+<input type="text" id="name"><br>
+<small id="nameerror" class="error"> Name must be between 6 and 100 characters.</small> <br> <br>
+
+<label> Professional Email: </label><br>
+<input type="text" id="email"><br>
+<small id="emailerror" class="error"> Please enter a valid professional email address.</small> <br> <br>
+
+<label>Company/Institution(Optional): </label><br>
+<input type="text" id="company"><br><br>
+
+<label> Attendance Type: </label><br>
+<input type="radio" name="attend" value="Virtual"> Virtual
+<input type="radio" name="attend" value="In-Person"> In Person <br>
+<small id="attenderror" class="error"> Please select your attendance type.</small> <br> <br>
+
+<button type="submit"> Register </button>
+</form>
+
+<h2> Recent Registrants </h2>
+<ul id="list"></ul>
+<button> Show Event Analytics </button>
+<div id="analytics">
+    <p>Total Registrants : <span id="total"> 0</span></p>
+    <p> Virtual : <span id="virtual"> 0 </span></p>
+    <p> In-Person : <span id="inperson"> 0  </span></p>
+</div>
+
+
+<script>
+    let data = [];
+
+    const form = document.getElementById("form");
+    const nameInput = document.getElementById("name");
+    const emailInput = document.getElementById("email");
+    const companyInput = document.getElementById("company");
+
+    const nameErr = document.getElementById("nameerror");
+    const emailErr = document.getElementById("emailerror");
+    const attendErr = document.getElementById("attenderror");
+
+    const list = document.getElementById("list");
+
+    const analytics = document.getElementById("analytics");
+    const total = document.getElementById("total");
+    const virtual = document.getElementById("virtual");
+    const inperson = document.getElementById("inperson");
+
+    const toggle = document.getElementById("toggle");
+
+    form.addEventListener("submit", function (e) 
+    {
+        e.preventDefault();
+
+        let name = nameInput.value.trim();
+        let email = emailInput.value.trim();
+        let attend = document.querySelector('input[name="attend"]:checked');
+
+        let valid = true;
+
+        if (name.length < 6 || name.length > 100) 
+        {
+            valid = false;
+            nameErr.style.display = "block";
+        } 
+        else 
+        {
+            nameErr.style.display = "none";
+        }
+
+        if (!email.includes("@") || !email.includes(".")) 
+        {
+            valid = false;
+            emailErr.style.display = "block";
+        } 
+        else 
+        {
+            emailErr.style.display = "none";
+        }
+
+        if (!attend) 
+        {
+            valid = false;
+            attendErr.style.display = "block";
+        } 
+        
+        else 
+        {
+            attendErr.style.display = "none";
+        }
+
+        if (!valid) return;
+
+        let item = {
+            name: name,
+            email: email,
+            company: companyInput.value,
+            attendance: attend.value
+        };
+
+        data.push(item);
+        renderList();
+        updateAnalytics();
+        form.reset();
+    });
+
+    function renderList() 
+    {
+        list.innerHTML = "";
+        data.slice(-5).reverse().forEach(d => {
+            let li = document.createElement("li");
+            li.textContent = d.name + " — " + d.attendance;
+            list.appendChild(li);
+        });
+    }
+
+    function updateAnalytics() 
+    {
+        total.textContent = data.length;
+        virtual.textContent = data.filter(x => x.attendance === "Virtual").length;
+        inperson.textContent = data.filter(x => x.attendance === "In-Person").length;
+    }
+
+    toggle.addEventListener("click", function () 
+    {
+        if (analytics.style.display === "none") 
+        {
+            analytics.style.display = "block";
+            toggle.textContent = "Hide Event Analytics";
+        } 
+        else 
+        {
+            analytics.style.display = "none";
+            toggle.textContent = "Show Event Analytics";
+        }
+    });
+</script>
+
+
+</body>
+</html>
